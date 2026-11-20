@@ -44,6 +44,8 @@ body {
 button, textarea, input { font: inherit; color: inherit; }
 button { cursor: pointer; border: 0; background: none; }
 [hidden] { display: none !important; }
+/* Niente zoom con il doppio tocco su iPhone (resta lo zoom a due dita, per chi vede poco) */
+* { touch-action: manipulation; }
 
 /* ---------- Il "telefono" ---------- */
 .telefono {
