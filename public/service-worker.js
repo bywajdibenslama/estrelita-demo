@@ -8,7 +8,7 @@
 // Le frasi stanno in content.js: il service worker le legge da lì
 importScripts("./content.js");
 
-const VERSIONE = "estrelita-v5";
+const VERSIONE = "estrelita-v6";
 const CACHE_FONT = "estrelita-font-v1";
 
 // File dell'app, con percorsi relativi alla posizione di questo file

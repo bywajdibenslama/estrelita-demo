@@ -126,14 +126,16 @@ button { cursor: pointer; border: 0; background: none; }
 
 /* ---------- Schermate ---------- */
 .schermate { position: absolute; inset: 0; bottom: calc(var(--altezza-barra) + env(safe-area-inset-bottom)); }
+/* Le schermate inattive sono tolte dalla pagina (display: none), non solo nascoste:
+   su iPhone, una zona che scorre resa visibile con visibility/opacity a volte
+   non viene ridisegnata e resta vuota (successo con "Chi sono" il 2026-11-20). */
 .schermata {
   position: absolute; inset: 0;
-  overflow-y: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain;
+  overflow-y: auto; overscroll-behavior: contain;
   padding: calc(env(safe-area-inset-top) + 28px) 22px 32px;
-  opacity: 0; visibility: hidden;
-  transition: opacity .6s var(--lento), visibility .6s;
+  display: none;
 }
-.schermata.attiva { opacity: 1; visibility: visible; }
+.schermata.attiva { display: block; animation: dissolvi .5s var(--lento) both; }
 
 .intestazione { margin-bottom: 22px; }
 .titolo { font-family: var(--serif); font-weight: 500; font-size: 38px; line-height: 1.05; letter-spacing: .005em; }
