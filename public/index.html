@@ -92,7 +92,20 @@
           <span class="campanella" aria-hidden="true">🔔</span>
           <span id="btn-notifiche-testo"></span>
         </button>
-        <p class="messaggio-gentile" id="msg-notifiche" hidden></p>
+        <div class="messaggio-gentile" id="msg-notifiche" hidden>
+          <p id="msg-notifiche-testo"></p>
+          <button class="link-gentile" id="msg-notifiche-guida" hidden data-testo="installa.mostramiCome"></button>
+        </div>
+
+        <!-- Invito a installare l'app: sparisce quando l'app è già installata -->
+        <button class="card card-installa entra" id="card-installa" hidden>
+          <svg class="card-installa-tulipano" aria-hidden="true"><use href="#tulipano"/></svg>
+          <span class="card-installa-testi">
+            <span class="card-installa-titolo" data-testo="installa.card.titolo"></span>
+            <span class="card-installa-testo" data-testo="installa.card.testo"></span>
+          </span>
+          <span class="esercizio-freccia" aria-hidden="true">›</span>
+        </button>
       </section>
 
       <!-- ============ 2. ESERCIZI ============ -->
@@ -144,6 +157,7 @@
           <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.4-.2Z"/></svg>
           <span data-testo="chiSono.pulsanteWhatsapp"></span>
         </a>
+        <button class="pulsante pulsante-testo" id="btn-guida-chi" data-testo="installa.linkChiSono"></button>
       </section>
     </main>
 
@@ -179,6 +193,23 @@
       </div>
       <button class="pulsante pulsante-primario" id="btn-rispondi">Rispondi nel diario</button>
       <button class="pulsante pulsante-testo" id="btn-chiudi-foglio">Chiudi</button>
+    </div>
+
+    <!-- Foglio dal basso: guida all'installazione (si apre anche con il link …/#installa) -->
+    <div class="foglio" id="foglio-installa" role="dialog" aria-modal="true" aria-labelledby="installa-titolo" hidden>
+      <div class="foglio-maniglia" aria-hidden="true"></div>
+      <svg class="installa-tulipano" aria-hidden="true"><use href="#tulipano"/></svg>
+      <h2 class="titolo titolo-foglio" id="installa-titolo" data-testo="installa.titolo"></h2>
+      <p class="installa-intro" id="installa-intro" data-testo="installa.introduzione"></p>
+      <div class="schede" role="tablist" aria-label="Il tuo telefono">
+        <button class="scheda" role="tab" data-piattaforma="iphone">iPhone</button>
+        <button class="scheda" role="tab" data-piattaforma="android">Android</button>
+      </div>
+      <button class="pulsante pulsante-primario" id="btn-installa-ora" hidden data-testo="installa.installaOra"></button>
+      <ol class="passi" id="installa-passi"></ol>
+      <p class="installa-nota" id="installa-nota"></p>
+      <button class="pulsante pulsante-secondario" id="btn-copia-link" data-testo="installa.copiaLink"></button>
+      <button class="pulsante pulsante-testo" id="btn-chiudi-installa">Chiudi</button>
     </div>
 
     <!-- Avviso breve in basso (salvataggi, annulla) -->

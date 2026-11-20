@@ -5,7 +5,7 @@
    avvio il telefono scarica i file nuovi e butta la cache vecchia.
    ===================================================================== */
 
-const VERSIONE = "estrelita-v2";
+const VERSIONE = "estrelita-v4";
 const CACHE_FONT = "estrelita-font-v1";
 
 // File dell'app, con percorsi relativi alla posizione di questo file

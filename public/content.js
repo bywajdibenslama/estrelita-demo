@@ -110,10 +110,48 @@ const CONTENUTI = {
     attivate: "Riflessione del giorno attivata",
     titolo: "La riflessione del giorno 🌷",
     // Messaggio quando le notifiche non ci sono perché l'app non è installata (iPhone)
-    installaPrima: "Per ricevere la riflessione del giorno su iPhone, installa prima l'app: tocca Condividi, poi «Aggiungi a schermata Home», e aprila dalla sua icona. Ti aspetto lì 🌷",
+    installaPrima: "Su iPhone la riflessione del giorno arriva solo all'app installata: aggiungila alla schermata Home e aprila dal tulipano. Ti aspetto lì 🌷",
     nonSupportate: "Questo browser non permette le notifiche. Puoi comunque trovare ogni giorno la tua riflessione qui, nella home.",
     negate: "Le notifiche sono disattivate. Se cambi idea, puoi riattivarle dalle impostazioni del telefono, alla voce di questa app.",
     inviata: "Ecco la tua prima riflessione: l'hai ricevuta come notifica."
+  },
+
+  /* ---------- Guida all'installazione ----------
+     Per mandarla ai clienti: il link dell'app con #installa in fondo
+     (es. https://…/estrelita-demo/#installa) apre subito questa guida.
+     Nei passi: **parola** = grassetto; {condividi} {aggiungi} {menu} = icona disegnata. */
+  installa: {
+    card: {
+      titolo: "Porta Estrelita con te",
+      testo: "Installa l'app sul telefono: si apre con un tocco, anche senza internet."
+    },
+    linkChiSono: "Come installare l'app sul telefono",
+    mostramiCome: "Mostrami come si fa →",
+    titolo: "Installa l'app",
+    introduzione: "Bastano pochi tocchi. Poi troverai il tulipano sulla schermata Home, accanto alle tue app, e ti basterà toccarlo per tornare qui.",
+    installaOra: "Installa ora",
+    iphone: {
+      passi: [
+        "Apri questa pagina con **Safari**, la bussola blu.",
+        "Tocca **Condividi** {condividi}. Se non lo vedi, tocca prima **•••** in basso.",
+        "Scorri verso il basso e tocca **Aggiungi alla schermata Home** {aggiungi}.",
+        "Tocca **Aggiungi**. Fatto! Ora apri l'app dal tulipano 🌷"
+      ],
+      nota: "Hai aperto il link da WhatsApp o Instagram? Tocca prima «Apri in Safari», oppure copia il link qui sotto e incollalo in Safari."
+    },
+    android: {
+      passi: [
+        "Apri questa pagina con **Chrome**.",
+        "Tocca il menu {menu} in alto a destra.",
+        "Tocca **Installa app** oppure **Aggiungi a schermata Home**.",
+        "Conferma con **Installa**. Fatto! Ora apri l'app dal tulipano 🌷"
+      ],
+      nota: "Con Samsung Internet: tocca il menu ≡ in basso, poi «Aggiungi pagina a» e «Schermata Home»."
+    },
+    copiaLink: "Copia il link dell'app",
+    linkCopiato: "Link copiato 🌷",
+    giaInstallata: "L'app è già installata: la stai usando proprio ora 🌷",
+    installata: "Installata! Trovi il tulipano sulla schermata Home 🌷"
   },
 
   /* ---------- Esercizi ---------- */

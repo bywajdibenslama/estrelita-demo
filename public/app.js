@@ -143,8 +143,13 @@
   }
   $("#btn-rifletti").addEventListener("click", apriFoglio);
   $("#btn-chiudi-foglio").addEventListener("click", chiudiFoglio);
-  velo.addEventListener("click", chiudiFoglio);
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && !foglio.hidden) chiudiFoglio(); });
+  // Il velo e il tasto Esc chiudono il foglio aperto, qualunque sia
+  function chiudiFoglioAperto() {
+    if (!foglio.hidden) chiudiFoglio();
+    if (!$("#foglio-installa").hidden) chiudiGuida();
+  }
+  velo.addEventListener("click", chiudiFoglioAperto);
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") chiudiFoglioAperto(); });
 
   // "Rispondi nel diario": porta al diario con la domanda come guida
   let domandaInSospeso = null;
@@ -172,10 +177,13 @@
   }
   aggiornaPulsanteNotifiche();
 
-  function messaggioGentile(testoMsg) {
-    msgNotifiche.textContent = testoMsg;
+  // Messaggio sotto il pulsante; con conGuida compare anche "Mostrami come si fa"
+  function messaggioGentile(testoMsg, conGuida = false) {
+    $("#msg-notifiche-testo").textContent = testoMsg;
+    $("#msg-notifiche-guida").hidden = !conGuida;
     msgNotifiche.hidden = false;
   }
+  $("#msg-notifiche-guida").addEventListener("click", () => apriGuida());
 
   async function inviaNotificaDiProva() {
     const opzioni = {
@@ -197,7 +205,8 @@
     msgNotifiche.hidden = true;
     if (!("Notification" in window)) {
       // Su iPhone le notifiche esistono solo se l'app è installata nella schermata Home
-      messaggioGentile(ePhone && !installata ? C.notifiche.installaPrima : C.notifiche.nonSupportate);
+      if (ePhone && !installata) messaggioGentile(C.notifiche.installaPrima, true);
+      else messaggioGentile(C.notifiche.nonSupportate);
       return;
     }
     try {
@@ -578,6 +587,105 @@
   firma.textContent = C.chiSono.firma;
   pres.append(firma);
   $("#btn-whatsapp").href = C.whatsapp;
+
+  /* =================================================================
+     GUIDA ALL'INSTALLAZIONE
+     - card in home finché l'app non è installata
+     - Android/Chrome: pulsante "Installa ora" con la finestra di sistema
+     - iPhone: passi illustrati (Safari non ha un pulsante automatico)
+     - il link …/#installa apre la guida appena si entra
+     ================================================================= */
+  const I = C.installa;
+  const foglioInstalla = $("#foglio-installa");
+  const cardInstalla = $("#card-installa");
+  const eAndroid = /android/i.test(navigator.userAgent);
+  let richiestaInstallazione = null; // evento beforeinstallprompt, solo Chrome/Android/desktop
+
+  // Piccole icone disegnate, uguali a quelle che si vedono sul telefono
+  const ICONE = {
+    condividi: '<svg viewBox="0 0 24 24"><path d="M12 3v12M8 7l4-4 4 4M6 11H5v10h14V11h-1"/></svg>',
+    aggiungi: '<svg viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="4"/><path d="M12 8v8M8 12h8"/></svg>',
+    menu: '<svg viewBox="0 0 24 24"><circle cx="12" cy="5" r="1.4"/><circle cx="12" cy="12" r="1.4"/><circle cx="12" cy="19" r="1.4"/></svg>'
+  };
+  // Da testo di content.js a HTML: si protegge il testo, poi **grassetto** e {icona}
+  function passoInHtml(t) {
+    const sicuro = t.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+    return sicuro
+      .replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>")
+      .replace(/\{(\w+)\}/g, (_, nome) => (ICONE[nome] ? `<span class="icona-passo" aria-hidden="true">${ICONE[nome]}</span>` : ""));
+  }
+
+  function mostraPiattaforma(p) {
+    $$(".scheda", foglioInstalla).forEach((s) => s.setAttribute("aria-selected", String(s.dataset.piattaforma === p)));
+    const passi = $("#installa-passi");
+    passi.innerHTML = "";
+    I[p].passi.forEach((t) => {
+      const li = document.createElement("li");
+      li.innerHTML = passoInHtml(t);
+      passi.append(li);
+    });
+    $("#installa-nota").textContent = I[p].nota;
+    // Il pulsante automatico c'è solo se il browser l'ha offerto (Chrome)
+    $("#btn-installa-ora").hidden = !(richiestaInstallazione && p === "android");
+  }
+  $$(".scheda", foglioInstalla).forEach((s) => s.addEventListener("click", () => mostraPiattaforma(s.dataset.piattaforma)));
+
+  function apriGuida() {
+    if (installata) { mostraAvviso(I.giaInstallata); return; }
+    if (!foglio.hidden) chiudiFoglio();
+    mostraPiattaforma(eAndroid ? "android" : "iphone");
+    foglioInstalla.classList.remove("chiude");
+    foglioInstalla.hidden = false;
+    foglioInstalla.scrollTop = 0;
+    velo.hidden = false;
+  }
+  function chiudiGuida() {
+    foglioInstalla.classList.add("chiude");
+    velo.hidden = true;
+    setTimeout(() => { foglioInstalla.hidden = true; }, 420);
+    if (location.hash === "#installa") history.replaceState(null, "", location.pathname + location.search);
+  }
+  $("#btn-chiudi-installa").addEventListener("click", chiudiGuida);
+  cardInstalla.addEventListener("click", apriGuida);
+  $("#btn-guida-chi").addEventListener("click", apriGuida);
+  if (installata) $("#btn-guida-chi").hidden = true;
+  else cardInstalla.hidden = false;
+
+  // Chrome offre l'installazione: la teniamo da parte per il pulsante "Installa ora"
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    richiestaInstallazione = e;
+    if (!foglioInstalla.hidden && $('.scheda[aria-selected="true"]').dataset.piattaforma === "android") {
+      $("#btn-installa-ora").hidden = false;
+    }
+  });
+  $("#btn-installa-ora").addEventListener("click", async () => {
+    if (!richiestaInstallazione) return;
+    richiestaInstallazione.prompt();
+    const { outcome } = await richiestaInstallazione.userChoice;
+    richiestaInstallazione = null;
+    $("#btn-installa-ora").hidden = true;
+    if (outcome === "accepted") chiudiGuida();
+  });
+  window.addEventListener("appinstalled", () => {
+    cardInstalla.hidden = true;
+    mostraAvviso(I.installata);
+  });
+
+  // Copia del link dell'app (senza #installa), da incollare in Safari o mandare a un'amica
+  $("#btn-copia-link").addEventListener("click", async () => {
+    const link = location.origin + location.pathname;
+    try { await navigator.clipboard.writeText(link); mostraAvviso(I.linkCopiato); }
+    catch { window.prompt(I.copiaLink, link); }
+  });
+
+  // Link diretto alla guida: …/#installa
+  if (location.hash === "#installa") {
+    if (intro.isConnected) chiudiIntro();
+    setTimeout(apriGuida, 600);
+  }
+  // …anche quando il link si apre con l'app già aperta (cambia solo l'ancora)
+  window.addEventListener("hashchange", () => { if (location.hash === "#installa") apriGuida(); });
 
   /* =================================================================
      SERVICE WORKER: registrato con scope "./" (sottopercorso di GitHub Pages)
