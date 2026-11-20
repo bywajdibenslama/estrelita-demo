@@ -8,7 +8,7 @@
 // Le frasi stanno in content.js: il service worker le legge da lì
 importScripts("./content.js");
 
-const VERSIONE = "estrelita-v6";
+const VERSIONE = "estrelita-v7";
 const CACHE_FONT = "estrelita-font-v1";
 
 // File dell'app, con percorsi relativi alla posizione di questo file
@@ -27,26 +27,38 @@ const FILE_APP = [
   "./icons/apple-touch-icon.png"
 ];
 
-// Installazione: si mettono in cache tutti i file dell'app
+// Installazione: si scarica la versione intera, direttamente dal server.
+// cache: "reload" salta la cache HTTP del browser: senza, GitHub Pages
+// (che fa tenere i file 10 minuti) può dare un app.js vecchio dentro una
+// versione nuova, e l'app si rompe (successo il 2026-11-20 su Chrome per Mac).
 self.addEventListener("install", (evento) => {
   evento.waitUntil(
-    caches.open(VERSIONE).then((cache) => cache.addAll(FILE_APP)).then(() => self.skipWaiting())
+    caches.open(VERSIONE)
+      .then((cache) => cache.addAll(FILE_APP.map((url) => new Request(url, { cache: "reload" }))))
+      .then(() => self.skipWaiting())
   );
 });
 
-// Attivazione: si cancellano le cache delle versioni precedenti
+// Attivazione: si cancellano le cache delle versioni precedenti.
+// Se c'era una versione vecchia, si ricaricano le pagine aperte: così passano
+// tutte insieme ai file nuovi, anche una pagina rotta che da sola non saprebbe farlo.
 self.addEventListener("activate", (evento) => {
-  evento.waitUntil(
-    caches.keys()
-      .then((nomi) => Promise.all(
-        nomi.filter((n) => n !== VERSIONE && n !== CACHE_FONT).map((n) => caches.delete(n))
-      ))
-      .then(() => self.clients.claim())
-  );
+  evento.waitUntil((async () => {
+    const vecchie = (await caches.keys()).filter((n) => n !== VERSIONE && n !== CACHE_FONT);
+    await Promise.all(vecchie.map((n) => caches.delete(n)));
+    await self.clients.claim();
+    if (!vecchie.length) return; // prima installazione: niente da ricaricare
+    const finestre = await self.clients.matchAll({ type: "window" });
+    // La ricarica NON si aspetta: la pagina ricaricata chiede i file a questo
+    // service worker, che non risponde finché l'attivazione non è finita.
+    // Aspettarla qui bloccherebbe tutto (successo nella prova del 2026-11-20).
+    finestre.forEach((f) => f.navigate(f.url).catch(() => {}));
+  })());
 });
 
-// Richieste: prima la cache (risposta immediata, anche offline),
-// intanto si aggiorna la copia dalla rete per la volta successiva.
+// Richieste: i file dell'app escono SOLO dalla cache della versione attiva,
+// tutti insieme. Mai un file nuovo accanto a uno vecchio: le novità arrivano
+// con la versione successiva (VERSIONE), che l'app carica ricaricandosi una volta.
 self.addEventListener("fetch", (evento) => {
   const richiesta = evento.request;
   if (richiesta.method !== "GET") return;
@@ -54,40 +66,35 @@ self.addEventListener("fetch", (evento) => {
 
   // Caratteri di Google Fonts: in una cache a parte, così restano anche offline
   if (url.hostname === "fonts.googleapis.com" || url.hostname === "fonts.gstatic.com") {
-    evento.respondWith(cacheERete(richiesta, CACHE_FONT));
+    evento.respondWith(caratteri(richiesta));
     return;
   }
 
   // Solo i file della nostra app
   if (url.origin !== self.location.origin) return;
 
-  // Apertura di una pagina: se non c'è in cache, si mostra la home
-  if (richiesta.mode === "navigate") {
-    evento.respondWith(
-      cacheERete(richiesta, VERSIONE).catch(() => caches.match("./index.html"))
-    );
-    return;
-  }
-
-  evento.respondWith(cacheERete(richiesta, VERSIONE));
+  evento.respondWith(
+    caches.open(VERSIONE).then(async (cache) => {
+      const inCache = await cache.match(richiesta, { ignoreSearch: true });
+      if (inCache) return inCache;
+      // Apertura di una pagina che non è in cache (es. ./?qualcosa): si mostra la home
+      if (richiesta.mode === "navigate") {
+        const home = await cache.match("./");
+        if (home) return home;
+      }
+      return fetch(richiesta);
+    })
+  );
 });
 
-// Strategia "stale-while-revalidate": risponde con la cache e aggiorna in background
-async function cacheERete(richiesta, nomeCache) {
-  const cache = await caches.open(nomeCache);
-  const inCache = await cache.match(richiesta, { ignoreSearch: true });
-  const daRete = fetch(richiesta)
-    .then((risposta) => {
-      if (risposta && (risposta.ok || risposta.type === "opaque")) {
-        cache.put(richiesta, risposta.clone());
-      }
-      return risposta;
-    });
-  if (inCache) {
-    daRete.catch(() => {}); // offline: va bene così, la copia in cache basta
-    return inCache;
-  }
-  return daRete; // non c'è in cache: serve la rete (se manca, decide chi chiama)
+// Caratteri: dalla cache se ci sono, altrimenti dalla rete e si conservano
+async function caratteri(richiesta) {
+  const cache = await caches.open(CACHE_FONT);
+  const inCache = await cache.match(richiesta);
+  if (inCache) return inCache;
+  const risposta = await fetch(richiesta);
+  if (risposta && (risposta.ok || risposta.type === "opaque")) cache.put(richiesta, risposta.clone());
+  return risposta;
 }
 
 // Tocco sulla notifica: si apre (o si porta in primo piano) l'app

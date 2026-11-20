@@ -736,8 +736,9 @@
      SERVICE WORKER: registrato con scope "./" (sottopercorso di GitHub Pages)
      ================================================================= */
   if ("serviceWorker" in navigator) {
+    // Le versioni nuove le carica il service worker, ricaricando la pagina (vedi activate)
     window.addEventListener("load", () => {
-      navigator.serviceWorker.register("./service-worker.js", { scope: "./" })
+      navigator.serviceWorker.register("./service-worker.js", { scope: "./", updateViaCache: "none" })
         .catch((errore) => console.warn("Service worker non registrato:", errore));
     });
   }
