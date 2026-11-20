@@ -1,0 +1,405 @@
+/* =====================================================================
+   ESTRELITA — stile dell'app
+   Mobile-first (375–430 px). Su desktop l'app si mostra come un telefono.
+   ===================================================================== */
+
+/* ---------- Colori e misure: si cambiano solo qui ---------- */
+:root {
+  --cipria: #E8B4B8;
+  --cipria-scuro: #C98589;
+  --cipria-chiaro: #F6E3E3;
+  --salvia: #A8B5A2;
+  --salvia-scuro: #7F8F79;
+  --salvia-chiaro: #E7ECE4;
+  --crema: #FAF6F0;
+  --bianco-caldo: #FFFDF9;
+  --testo: #4A3F3A;
+  --testo-tenue: #8A7C75;
+  --verde-whatsapp: #5E9A6B;
+
+  --serif: "Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --sans: "Nunito", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --raggio: 26px;
+  --raggio-piccolo: 16px;
+  --ombra: 0 10px 30px -12px rgba(120, 80, 70, .22), 0 2px 6px -2px rgba(120, 80, 70, .08);
+  --ombra-lieve: 0 6px 18px -10px rgba(120, 80, 70, .25);
+  --lento: cubic-bezier(.22, .61, .36, 1);
+  --altezza-barra: 74px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  font-family: var(--sans);
+  color: var(--testo);
+  background: var(--crema);
+  -webkit-font-smoothing: antialiased;
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+button, textarea, input { font: inherit; color: inherit; }
+button { cursor: pointer; border: 0; background: none; }
+[hidden] { display: none !important; }
+
+/* ---------- Il "telefono" ---------- */
+.telefono {
+  position: relative;
+  width: 100%;
+  height: 100dvh;
+  overflow: hidden;
+  background: var(--crema);
+  isolation: isolate;
+}
+
+/* Su schermi larghi l'app si mostra centrata, come un telefono */
+@media (min-width: 600px) {
+  body {
+    display: grid;
+    place-items: center;
+    background:
+      radial-gradient(circle at 20% 20%, var(--cipria-chiaro), transparent 50%),
+      radial-gradient(circle at 80% 80%, var(--salvia-chiaro), transparent 50%),
+      #F1EAE2;
+  }
+  .telefono {
+    width: 400px;
+    height: min(860px, calc(100dvh - 48px));
+    border-radius: 44px;
+    box-shadow: 0 40px 80px -30px rgba(90, 60, 50, .45), 0 0 0 10px #fff, 0 0 0 11px #E9DED6;
+  }
+}
+
+/* ---------- Sfondo che respira ---------- */
+.aura { position: absolute; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
+.aura span {
+  position: absolute; border-radius: 50%; filter: blur(40px); opacity: .55;
+  animation: respiro-aura 14s ease-in-out infinite;
+}
+.aura-1 { width: 280px; height: 280px; background: var(--cipria-chiaro); top: -80px; right: -90px; }
+.aura-2 { width: 240px; height: 240px; background: var(--salvia-chiaro); bottom: 60px; left: -110px; animation-delay: -5s !important; }
+.aura-3 { width: 180px; height: 180px; background: #F7E9DA; top: 40%; right: -60px; animation-delay: -9s !important; }
+@keyframes respiro-aura {
+  0%, 100% { transform: scale(1) translate(0, 0); }
+  50% { transform: scale(1.18) translate(-10px, 14px); }
+}
+
+/* ---------- Apertura ---------- */
+.intro {
+  position: absolute; inset: 0; z-index: 50;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: var(--crema);
+  transition: opacity 1.1s var(--lento), visibility 1.1s;
+}
+.intro.via { opacity: 0; visibility: hidden; }
+.intro-alone {
+  position: absolute; width: 260px; height: 260px; border-radius: 50%;
+  background: radial-gradient(circle, var(--cipria-chiaro) 0%, transparent 70%);
+  animation: alone 3s var(--lento) both;
+}
+.intro-tulipano { width: 120px; height: 156px; position: relative; overflow: visible; }
+.intro-tulipano .t-stelo { stroke-dasharray: 110; stroke-dashoffset: 110; animation: traccia 1.2s var(--lento) .1s forwards; }
+.intro-tulipano .t-foglia { transform-origin: 256px 400px; transform: scale(0); animation: cresci 1s var(--lento) .6s forwards; }
+.intro-tulipano .t-petalo { transform-origin: 256px 300px; opacity: 0; }
+.intro-tulipano .t-centro { animation: sboccia-c 1.2s var(--lento) .9s forwards; }
+.intro-tulipano .t-sx { animation: sboccia-sx 1.3s var(--lento) 1.1s forwards; }
+.intro-tulipano .t-dx { animation: sboccia-dx 1.3s var(--lento) 1.1s forwards; }
+.intro-nome {
+  font-family: var(--serif); font-size: 46px; font-weight: 500; letter-spacing: .02em;
+  margin-top: 22px; opacity: 0; animation: sali 1.2s var(--lento) 1.6s forwards;
+}
+.intro-motto {
+  font-size: 12px; letter-spacing: .32em; text-transform: uppercase; color: var(--testo-tenue);
+  margin-top: 6px; opacity: 0; animation: sali 1.2s var(--lento) 2s forwards;
+}
+@keyframes traccia { to { stroke-dashoffset: 0; } }
+@keyframes cresci { to { transform: scale(1); } }
+@keyframes sboccia-c { from { opacity: 0; transform: scale(.3); } to { opacity: 1; transform: scale(1); } }
+@keyframes sboccia-sx { from { opacity: 0; transform: rotate(18deg) scale(.4); } to { opacity: 1; transform: rotate(0) scale(1); } }
+@keyframes sboccia-dx { from { opacity: 0; transform: rotate(-18deg) scale(.4); } to { opacity: .92; transform: rotate(0) scale(1); } }
+@keyframes sali { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+@keyframes alone { from { transform: scale(.4); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+/* ---------- Schermate ---------- */
+.schermate { position: absolute; inset: 0; bottom: calc(var(--altezza-barra) + env(safe-area-inset-bottom)); }
+.schermata {
+  position: absolute; inset: 0;
+  overflow-y: auto; -webkit-overflow-scrolling: touch;
+  padding: calc(env(safe-area-inset-top) + 28px) 22px 32px;
+  opacity: 0; visibility: hidden; transform: translateY(10px);
+  transition: opacity .7s var(--lento), transform .7s var(--lento), visibility .7s;
+}
+.schermata.attiva { opacity: 1; visibility: visible; transform: none; }
+
+.intestazione { margin-bottom: 22px; }
+.titolo { font-family: var(--serif); font-weight: 500; font-size: 38px; line-height: 1.05; letter-spacing: .005em; }
+.sottotitolo { color: var(--testo-tenue); margin-top: 6px; font-size: 15px; }
+.data-oggi { font-size: 12px; letter-spacing: .18em; text-transform: uppercase; color: var(--salvia-scuro); margin-bottom: 8px; font-weight: 600; }
+.etichetta { font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--cipria-scuro); font-weight: 700; }
+
+/* Comparsa lenta degli elementi quando si apre una schermata */
+.schermata.attiva .entra { animation: sali 1s var(--lento) both; }
+.schermata.attiva .entra:nth-of-type(2) { animation-delay: .15s; }
+
+/* ---------- Card ---------- */
+.card {
+  background: var(--bianco-caldo);
+  border-radius: var(--raggio);
+  box-shadow: var(--ombra);
+  padding: 24px 22px;
+  margin-bottom: 18px;
+}
+
+/* Banner della demo */
+.banner-demo {
+  display: flex; align-items: center; justify-content: space-between; gap: 10px;
+  background: var(--salvia-chiaro); color: var(--salvia-scuro);
+  font-size: 12.5px; font-weight: 600;
+  padding: 8px 8px 8px 16px; border-radius: 999px; margin-bottom: 22px;
+  transition: opacity .5s, transform .5s;
+}
+.banner-demo.via { opacity: 0; transform: translateY(-8px); }
+.banner-chiudi { width: 26px; height: 26px; border-radius: 50%; font-size: 18px; line-height: 1; color: var(--salvia-scuro); }
+.banner-chiudi:hover { background: rgba(255, 255, 255, .6); }
+
+/* Card della frase del giorno */
+.card-frase {
+  position: relative; overflow: hidden; text-align: center;
+  padding: 30px 26px 26px;
+  background: linear-gradient(170deg, #FFFDF9 0%, #FBEFEC 100%);
+}
+.frase-tulipano {
+  width: 46px; height: 60px; display: block; margin: 16px auto 8px;
+  animation: ondeggia 7s ease-in-out infinite; transform-origin: 50% 100%;
+}
+@keyframes ondeggia { 0%, 100% { transform: rotate(-2.5deg); } 50% { transform: rotate(2.5deg); } }
+.frase {
+  font-family: var(--serif); font-style: italic; font-size: 27px; line-height: 1.28;
+  margin: 6px 0 24px;
+}
+.frase::before, .frase::after { color: var(--cipria); }
+.frase::before { content: "«"; }
+.frase::after { content: "»"; }
+
+/* ---------- Pulsanti ---------- */
+.pulsante {
+  display: flex; align-items: center; justify-content: center; gap: 10px;
+  width: 100%; min-height: 52px; padding: 14px 22px;
+  border-radius: 999px; font-weight: 700; font-size: 15.5px; letter-spacing: .01em;
+  text-decoration: none;
+  transition: transform .4s var(--lento), box-shadow .4s var(--lento), background .4s;
+}
+.pulsante:active { transform: scale(.97); }
+.pulsante-primario { background: var(--cipria); color: #fff; box-shadow: 0 10px 22px -10px rgba(201, 133, 137, .9); text-shadow: 0 1px 1px rgba(120, 60, 60, .25); }
+.pulsante-primario:hover { background: #E2A8AD; }
+.pulsante-morbido { background: var(--bianco-caldo); color: var(--testo); box-shadow: var(--ombra-lieve); border: 1px solid #F0E4DC; }
+.pulsante-morbido.fatto { color: var(--salvia-scuro); border-color: var(--salvia-chiaro); }
+.pulsante-secondario { background: var(--salvia); color: #fff; box-shadow: 0 10px 22px -12px rgba(127, 143, 121, .9); }
+.pulsante-testo { color: var(--testo-tenue); font-weight: 600; min-height: 44px; }
+.pulsante-whatsapp { background: var(--verde-whatsapp); color: #fff; box-shadow: 0 12px 24px -12px rgba(70, 120, 80, .9); margin-top: 6px; }
+.pulsante-whatsapp svg { width: 22px; height: 22px; }
+.pulsante[disabled] { opacity: .5; pointer-events: none; }
+
+.messaggio-gentile {
+  margin-top: 14px; padding: 16px 18px; border-radius: var(--raggio-piccolo);
+  background: var(--cipria-chiaro); font-size: 14.5px; line-height: 1.55;
+  animation: sali .8s var(--lento) both;
+}
+
+/* ---------- Foglio dal basso ---------- */
+.velo {
+  position: absolute; inset: 0; z-index: 30; background: rgba(74, 63, 58, .28);
+  backdrop-filter: blur(2px); -webkit-backdrop-filter: blur(2px);
+  animation: dissolvi .5s var(--lento) both;
+}
+.foglio {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 31;
+  max-height: 88%; overflow-y: auto;
+  background: var(--bianco-caldo); border-radius: 30px 30px 0 0;
+  padding: 14px 24px calc(22px + env(safe-area-inset-bottom));
+  box-shadow: 0 -20px 40px -20px rgba(90, 60, 50, .35);
+  animation: sali-foglio .7s var(--lento) both;
+}
+.foglio.chiude { animation: scendi-foglio .45s var(--lento) both; }
+.foglio-maniglia { width: 42px; height: 5px; border-radius: 3px; background: #E7DAD2; margin: 0 auto 22px; }
+.foglio-testo { font-size: 16px; line-height: 1.7; margin: 10px 0 22px; }
+.foglio-domanda { background: var(--salvia-chiaro); border-radius: var(--raggio-piccolo); padding: 18px; margin-bottom: 20px; }
+.foglio-domanda .etichetta { color: var(--salvia-scuro); }
+.domanda { font-family: var(--serif); font-size: 22px; font-style: italic; line-height: 1.3; margin-top: 6px; }
+@keyframes dissolvi { from { opacity: 0; } }
+@keyframes sali-foglio { from { transform: translateY(100%); } }
+@keyframes scendi-foglio { to { transform: translateY(100%); } }
+
+/* ---------- Esercizi ---------- */
+.elenco-esercizi { display: grid; gap: 14px; }
+.esercizio-voce {
+  display: flex; align-items: center; gap: 16px; width: 100%; text-align: left;
+  background: var(--bianco-caldo); border-radius: var(--raggio); box-shadow: var(--ombra-lieve);
+  padding: 18px; transition: transform .4s var(--lento);
+  animation: sali .9s var(--lento) both;
+}
+.esercizio-voce:active { transform: scale(.98); }
+.esercizio-icona {
+  flex: none; width: 54px; height: 54px; border-radius: 18px;
+  display: grid; place-items: center; font-size: 26px;
+}
+.esercizio-voce:nth-child(4n+1) .esercizio-icona { background: var(--salvia-chiaro); }
+.esercizio-voce:nth-child(4n+2) .esercizio-icona { background: #FBF0D9; }
+.esercizio-voce:nth-child(4n+3) .esercizio-icona { background: var(--cipria-chiaro); }
+.esercizio-voce:nth-child(4n+4) .esercizio-icona { background: #F3E6EC; }
+.esercizio-nome { font-family: var(--serif); font-size: 22px; font-weight: 600; line-height: 1.1; }
+.esercizio-descrizione { font-size: 13.5px; color: var(--testo-tenue); margin-top: 3px; }
+.esercizio-freccia { margin-left: auto; color: var(--cipria-scuro); font-size: 20px; }
+
+.vista-dettaglio { animation: sali .7s var(--lento) both; }
+.indietro { color: var(--testo-tenue); font-weight: 600; font-size: 14px; padding: 6px 0; margin-bottom: 14px; }
+.introduzione { color: var(--testo-tenue); line-height: 1.6; margin: 8px 0 22px; }
+
+/* Respirazione guidata */
+.respiro-area { display: grid; place-items: center; height: 300px; position: relative; margin: 6px 0 10px; }
+.respiro-anello {
+  position: absolute; width: 250px; height: 250px; border-radius: 50%;
+  border: 1.5px dashed rgba(168, 181, 162, .7);
+}
+.respiro-cerchio {
+  width: 250px; height: 250px; border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #FBE6E6, var(--cipria) 70%);
+  box-shadow: 0 0 60px 6px rgba(232, 180, 184, .45);
+  transform: scale(.45);
+  transition-property: transform; transition-timing-function: ease-in-out;
+}
+.respiro-guida {
+  position: absolute; text-align: center; pointer-events: none;
+  font-family: var(--serif); font-size: 30px; font-style: italic; color: var(--testo);
+  transition: opacity .6s;
+}
+.respiro-guida small { display: block; font-family: var(--sans); font-style: normal; font-size: 14px; color: var(--testo-tenue); margin-top: 2px; }
+.respiro-tempo { text-align: center; font-variant-numeric: tabular-nums; color: var(--testo-tenue); margin-bottom: 18px; letter-spacing: .1em; }
+
+/* Gratitudine e lettera */
+.campo {
+  width: 100%; border: 1px solid #EFE3DB; background: var(--crema);
+  border-radius: var(--raggio-piccolo); padding: 14px 16px; margin-bottom: 12px;
+  font-size: 16px; line-height: 1.55; resize: vertical; outline: none;
+  transition: border-color .4s, box-shadow .4s, background .4s;
+}
+.campo:focus { border-color: var(--cipria); background: #fff; box-shadow: 0 0 0 4px rgba(232, 180, 184, .25); }
+.campo-numerato { display: flex; align-items: center; gap: 12px; }
+.campo-numerato span { font-family: var(--serif); font-size: 26px; color: var(--cipria-scuro); width: 16px; margin-bottom: 12px; }
+.lettera { font-family: var(--serif); font-size: 20px; min-height: 280px; background: #FFFCF6 repeating-linear-gradient(transparent 0 33px, #F1E6DE 33px 34px); line-height: 34px; padding-top: 8px; }
+
+/* Affermazione */
+.affermazione-card {
+  min-height: 240px; display: grid; place-items: center; text-align: center;
+  background: linear-gradient(160deg, var(--cipria-chiaro), #F7EFE6 60%, var(--salvia-chiaro));
+  margin-bottom: 18px;
+}
+.affermazione {
+  font-family: var(--serif); font-size: 32px; font-weight: 500; line-height: 1.22;
+  transition: opacity .7s var(--lento), transform .7s var(--lento);
+}
+.affermazione.svanisce { opacity: 0; transform: translateY(8px); }
+
+/* ---------- Diario ---------- */
+.domanda-umore { font-family: var(--serif); font-size: 24px; font-weight: 500; margin-bottom: 14px; }
+.umori { display: flex; justify-content: space-between; gap: 6px; margin-bottom: 16px; }
+.umore {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 10px 0 8px; border-radius: 18px; border: 1.5px solid transparent;
+  transition: background .4s, border-color .4s, transform .4s var(--lento);
+}
+.umore span:first-child { font-size: 30px; filter: grayscale(.35); transition: filter .4s, transform .4s var(--lento); }
+.umore span:last-child { font-size: 10.5px; color: var(--testo-tenue); font-weight: 600; }
+.umore[aria-checked="true"] { background: var(--cipria-chiaro); border-color: var(--cipria); }
+.umore[aria-checked="true"] span:first-child { filter: none; transform: scale(1.15); }
+.riflessione-guida { font-family: var(--serif); font-style: italic; font-size: 18px; color: var(--salvia-scuro); margin-bottom: 10px; line-height: 1.35; }
+
+.voci { display: grid; gap: 12px; margin-top: 6px; }
+.voci-vuoto { text-align: center; color: var(--testo-tenue); padding: 26px 16px; font-family: var(--serif); font-size: 19px; font-style: italic; }
+.voce {
+  position: relative; background: var(--bianco-caldo); border-radius: 22px; box-shadow: var(--ombra-lieve);
+  padding: 16px 52px 16px 18px; animation: sali .7s var(--lento) both;
+  transition: opacity .5s, transform .5s;
+}
+.voce.via { opacity: 0; transform: translateX(30px); }
+.voce-testa { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; flex-wrap: wrap; }
+.voce-tipo { font-size: 10.5px; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; padding: 3px 9px; border-radius: 999px; background: var(--salvia-chiaro); color: var(--salvia-scuro); }
+.voce-tipo.tipo-gratitudine { background: #FBF0D9; color: #A07C3A; }
+.voce-tipo.tipo-lettera { background: #F3E6EC; color: #A06A80; }
+.voce-tipo.tipo-riflessione { background: var(--cipria-chiaro); color: var(--cipria-scuro); }
+.voce-data { font-size: 12px; color: var(--testo-tenue); }
+.voce-umore { font-size: 22px; margin-right: 2px; }
+.voce-domanda { font-family: var(--serif); font-style: italic; color: var(--salvia-scuro); font-size: 16px; margin-bottom: 4px; }
+.voce-testo { font-size: 15px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+.voce-elenco { padding-left: 18px; font-size: 15px; line-height: 1.6; }
+.voce-elimina {
+  position: absolute; top: 12px; right: 10px; width: 36px; height: 36px; border-radius: 50%;
+  display: grid; place-items: center; color: var(--testo-tenue); opacity: .7;
+}
+.voce-elimina:hover { background: var(--cipria-chiaro); opacity: 1; }
+.voce-elimina svg { width: 18px; height: 18px; }
+
+/* ---------- Chi sono ---------- */
+.profilo { text-align: center; padding-top: 10px; margin-bottom: 22px; }
+.foto {
+  width: 136px; height: 136px; border-radius: 50%; margin: 0 auto 16px;
+  display: grid; place-items: center; position: relative;
+  background: linear-gradient(145deg, var(--cipria-chiaro), #F7EFE6);
+  box-shadow: var(--ombra), inset 0 0 0 6px #fff;
+}
+.foto::before {
+  content: ""; position: absolute; inset: -8px; border-radius: 50%;
+  background: conic-gradient(from 200deg, var(--cipria), var(--salvia), var(--cipria));
+  z-index: -1; opacity: .8;
+  animation: pulsa 9s ease-in-out infinite;
+}
+.foto span { font-family: var(--serif); font-size: 68px; font-weight: 500; color: var(--cipria-scuro); font-style: italic; }
+.ruolo { color: var(--salvia-scuro); letter-spacing: .2em; text-transform: uppercase; font-size: 12px; font-weight: 700; margin-top: 6px; }
+.presentazione p { line-height: 1.7; margin-bottom: 12px; font-size: 15.5px; }
+.presentazione p:first-child { font-family: var(--serif); font-size: 24px; font-style: italic; }
+.presentazione .firma { font-family: var(--serif); font-style: italic; font-size: 20px; color: var(--cipria-scuro); margin: 4px 0 0; }
+
+/* ---------- Barra in basso ---------- */
+.barra {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 20;
+  height: calc(var(--altezza-barra) + env(safe-area-inset-bottom));
+  padding: 8px 10px env(safe-area-inset-bottom);
+  display: flex; justify-content: space-around; align-items: flex-start;
+  background: rgba(255, 253, 249, .88);
+  backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+  border-top: 1px solid #F0E6DE;
+}
+.barra-voce {
+  flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 6px 0; color: var(--testo-tenue); font-size: 11px; font-weight: 600;
+  transition: color .5s;
+}
+.barra-voce svg {
+  width: 26px; height: 26px; fill: none; stroke: currentColor; stroke-width: 1.6;
+  stroke-linecap: round; stroke-linejoin: round;
+  transition: transform .6s var(--lento);
+}
+.barra-voce.attiva { color: var(--cipria-scuro); }
+.barra-voce.attiva svg { transform: translateY(-2px) scale(1.08); }
+.barra-voce.attiva::after { content: ""; width: 5px; height: 5px; border-radius: 50%; background: var(--cipria); margin-top: -1px; }
+
+/* ---------- Avviso breve ---------- */
+.avviso {
+  position: absolute; left: 50%; z-index: 40;
+  bottom: calc(var(--altezza-barra) + env(safe-area-inset-bottom) + 14px);
+  transform: translate(-50%, 20px); opacity: 0; pointer-events: none;
+  display: flex; align-items: center; gap: 14px; white-space: nowrap;
+  background: var(--testo); color: #fff; padding: 12px 18px; border-radius: 999px;
+  font-size: 14px; box-shadow: var(--ombra);
+  transition: opacity .5s var(--lento), transform .5s var(--lento);
+}
+.avviso.visibile { opacity: 1; transform: translate(-50%, 0); pointer-events: auto; }
+.avviso button { color: var(--cipria); font-weight: 700; }
+
+/* Chi preferisce meno movimento: niente animazioni lunghe */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .2s !important; }
+}
+
+/* Respiro lento dell'anello attorno alla foto: solo scala, nessuno spostamento */
+@keyframes pulsa { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }

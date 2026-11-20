@@ -1,0 +1,20 @@
+{
+  "name": "Estrelita · Fiducia e speranza",
+  "short_name": "Estrelita",
+  "description": "Riflessioni, esercizi e un diario per ritrovare fiducia e speranza.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "lang": "it",
+  "dir": "ltr",
+  "background_color": "#FAF6F0",
+  "theme_color": "#FAF6F0",
+  "categories": ["lifestyle", "health", "education"],
+  "icons": [
+    { "src": "./icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "./icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

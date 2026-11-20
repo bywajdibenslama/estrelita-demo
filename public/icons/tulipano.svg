@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <!-- Icona di Estrelita: tulipano stilizzato su crema.
+       Il disegno sta nel 70% centrale, così regge anche il ritaglio "maskable" di Android. -->
+  <defs>
+    <linearGradient id="petaloA" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F0C6C9"/>
+      <stop offset="1" stop-color="#E0A3A8"/>
+    </linearGradient>
+    <linearGradient id="petaloB" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E3A7AC"/>
+      <stop offset="1" stop-color="#C98589"/>
+    </linearGradient>
+    <linearGradient id="foglia" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#B9C4B3"/>
+      <stop offset="1" stop-color="#8E9D88"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="#FAF6F0"/>
+  <circle cx="256" cy="250" r="150" fill="#F3E6E0"/>
+  <!-- stelo -->
+  <path d="M256 300 C 254 340, 258 370, 256 404" fill="none" stroke="#8E9D88" stroke-width="9" stroke-linecap="round"/>
+  <!-- foglie -->
+  <path d="M254 398 C 220 392, 186 362, 176 318 C 214 326, 244 352, 254 398 Z" fill="url(#foglia)"/>
+  <path d="M258 386 C 286 378, 314 352, 322 320 C 292 328, 266 350, 258 386 Z" fill="url(#foglia)" opacity=".85"/>
+  <!-- petalo dietro (centrale) -->
+  <path d="M256 150 C 286 178, 302 222, 296 262 C 284 292, 228 292, 216 262 C 210 222, 226 178, 256 150 Z" fill="url(#petaloB)"/>
+  <!-- petalo sinistro -->
+  <path d="M186 182 C 222 192, 252 226, 262 302 C 222 306, 190 286, 182 250 C 176 226, 178 204, 186 182 Z" fill="url(#petaloA)"/>
+  <!-- petalo destro -->
+  <path d="M326 182 C 290 192, 260 226, 250 302 C 290 306, 322 286, 330 250 C 336 226, 334 204, 326 182 Z" fill="url(#petaloA)" opacity=".92"/>
+  <!-- luce sul petalo -->
+  <path d="M200 206 C 214 222, 226 246, 232 276" fill="none" stroke="#FFFFFF" stroke-opacity=".45" stroke-width="5" stroke-linecap="round"/>
+</svg>

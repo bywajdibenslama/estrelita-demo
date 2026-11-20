@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Estrelita · Fiducia e speranza</title>
+  <meta name="description" content="Riflessioni, esercizi e un diario per ritrovare fiducia e speranza, con Estrelita, coach spirituale.">
+
+  <!-- PWA: tutti i percorsi sono relativi (./) perché l'app vive in un sottopercorso di GitHub Pages -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#FAF6F0">
+  <link rel="icon" href="./icons/tulipano.svg" type="image/svg+xml">
+  <link rel="icon" href="./icons/icon-192.png" type="image/png" sizes="192x192">
+
+  <!-- iPhone: icona, modalità a tutto schermo, titolo sotto l'icona -->
+  <link rel="apple-touch-icon" href="./icons/apple-touch-icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Estrelita">
+
+  <!-- Caratteri: Cormorant Garamond per i titoli, Nunito per il testo -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&family=Nunito:wght@300;400;600;700&display=swap">
+
+  <link rel="stylesheet" href="./styles.css">
+</head>
+<body>
+
+  <!-- Il disegno del tulipano, definito una volta e riusato ovunque con <use> -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <defs>
+      <linearGradient id="g-petalo" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#F0C6C9"/><stop offset="1" stop-color="#E0A3A8"/>
+      </linearGradient>
+      <linearGradient id="g-petalo-scuro" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0" stop-color="#E3A7AC"/><stop offset="1" stop-color="#C98589"/>
+      </linearGradient>
+      <linearGradient id="g-foglia" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0" stop-color="#B9C4B3"/><stop offset="1" stop-color="#8E9D88"/>
+      </linearGradient>
+    </defs>
+    <symbol id="tulipano" viewBox="150 140 212 276">
+      <path class="t-stelo" d="M256 300 C 254 340, 258 370, 256 404" fill="none" stroke="#8E9D88" stroke-width="9" stroke-linecap="round"/>
+      <path class="t-foglia" d="M254 398 C 220 392, 186 362, 176 318 C 214 326, 244 352, 254 398 Z" fill="url(#g-foglia)"/>
+      <path class="t-foglia" d="M258 386 C 286 378, 314 352, 322 320 C 292 328, 266 350, 258 386 Z" fill="url(#g-foglia)" opacity=".85"/>
+      <path class="t-petalo t-centro" d="M256 150 C 286 178, 302 222, 296 262 C 284 292, 228 292, 216 262 C 210 222, 226 178, 256 150 Z" fill="url(#g-petalo-scuro)"/>
+      <path class="t-petalo t-sx" d="M186 182 C 222 192, 252 226, 262 302 C 222 306, 190 286, 182 250 C 176 226, 178 204, 186 182 Z" fill="url(#g-petalo)"/>
+      <path class="t-petalo t-dx" d="M326 182 C 290 192, 260 226, 250 302 C 290 306, 322 286, 330 250 C 336 226, 334 204, 326 182 Z" fill="url(#g-petalo)" opacity=".92"/>
+    </symbol>
+  </svg>
+
+  <div class="telefono" id="app">
+
+    <!-- Apertura: il tulipano sboccia, poi si entra nell'app -->
+    <div class="intro" id="intro" aria-hidden="true">
+      <div class="intro-alone"></div>
+      <svg class="intro-tulipano"><use href="#tulipano"/></svg>
+      <p class="intro-nome" data-testo="nome"></p>
+      <p class="intro-motto">fiducia · speranza · luce</p>
+    </div>
+
+    <!-- Sfondo che respira piano -->
+    <div class="aura" aria-hidden="true">
+      <span class="aura-1"></span><span class="aura-2"></span><span class="aura-3"></span>
+    </div>
+
+    <main class="schermate">
+
+      <!-- ============ 1. HOME ============ -->
+      <section class="schermata attiva" id="home" aria-labelledby="saluto">
+        <div class="banner-demo" id="banner-demo">
+          <span data-testo="bannerDemo"></span>
+          <button class="banner-chiudi" id="banner-chiudi" aria-label="Chiudi">×</button>
+        </div>
+
+        <header class="intestazione">
+          <p class="data-oggi" id="data-oggi"></p>
+          <h1 class="titolo" id="saluto"></h1>
+          <p class="sottotitolo" data-testo="sottotitoloHome"></p>
+        </header>
+
+        <article class="card card-frase entra">
+          <p class="etichetta">La riflessione del giorno</p>
+          <svg class="frase-tulipano" aria-hidden="true"><use href="#tulipano"/></svg>
+          <blockquote class="frase" id="frase-oggi"></blockquote>
+          <button class="pulsante pulsante-primario" id="btn-rifletti">Rifletti</button>
+        </article>
+
+        <button class="pulsante pulsante-morbido entra" id="btn-notifiche">
+          <span class="campanella" aria-hidden="true">🔔</span>
+          <span id="btn-notifiche-testo"></span>
+        </button>
+        <p class="messaggio-gentile" id="msg-notifiche" hidden></p>
+      </section>
+
+      <!-- ============ 2. ESERCIZI ============ -->
+      <section class="schermata" id="esercizi" aria-labelledby="titolo-esercizi">
+        <div class="vista-elenco" id="esercizi-elenco">
+          <header class="intestazione">
+            <h1 class="titolo" id="titolo-esercizi" data-testo="esercizi.titolo"></h1>
+            <p class="sottotitolo" data-testo="esercizi.sottotitolo"></p>
+          </header>
+          <div class="elenco-esercizi" id="elenco-esercizi"></div>
+        </div>
+
+        <!-- Dettaglio di un esercizio: riempito da app.js -->
+        <div class="vista-dettaglio" id="esercizio-dettaglio" hidden>
+          <button class="indietro" id="btn-indietro">← Esercizi</button>
+          <div id="esercizio-contenuto"></div>
+        </div>
+      </section>
+
+      <!-- ============ 3. DIARIO ============ -->
+      <section class="schermata" id="diario" aria-labelledby="titolo-diario">
+        <header class="intestazione">
+          <h1 class="titolo" id="titolo-diario" data-testo="diario.titolo"></h1>
+          <p class="sottotitolo" data-testo="diario.sottotitolo"></p>
+        </header>
+
+        <div class="card">
+          <p class="domanda-umore" data-testo="diario.domandaUmore"></p>
+          <div class="umori" id="umori" role="radiogroup"></div>
+          <p class="riflessione-guida" id="diario-guida" hidden></p>
+          <textarea class="campo" id="diario-nota" rows="4"></textarea>
+          <button class="pulsante pulsante-primario" id="btn-salva-diario" data-testo="diario.salva"></button>
+        </div>
+
+        <div class="voci" id="voci"></div>
+      </section>
+
+      <!-- ============ 4. CHI SONO ============ -->
+      <section class="schermata" id="chi" aria-labelledby="nome-coach">
+        <div class="profilo">
+          <div class="foto" aria-label="Foto di Estrelita">
+            <span data-testo="iniziale"></span>
+          </div>
+          <h1 class="titolo" id="nome-coach" data-testo="nome"></h1>
+          <p class="ruolo" data-testo="ruolo"></p>
+        </div>
+        <div class="card presentazione" id="presentazione"></div>
+        <a class="pulsante pulsante-whatsapp" id="btn-whatsapp" target="_blank" rel="noopener">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.2l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.4.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.8 11.9 11.9 0 0 0 4.6 4c1.7.7 2.4.8 3.2.7.5-.1 1.5-.6 1.8-1.2.2-.6.2-1.1.1-1.2l-.4-.2Z"/></svg>
+          <span data-testo="chiSono.pulsanteWhatsapp"></span>
+        </a>
+      </section>
+    </main>
+
+    <!-- Barra di navigazione in basso -->
+    <nav class="barra" aria-label="Navigazione">
+      <button class="barra-voce attiva" data-vai="home" aria-label="Oggi">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3c2 2 3 4 3 6.5a3 3 0 0 1-6 0C9 7 10 5 12 3Zm0 9.5V21m0-3c-2.5 0-4.5-1.6-5-4 2.5 0 4.5 1.6 5 4Zm0-1c2-.2 3.6-1.4 4-3.4-2 .1-3.6 1.4-4 3.4Z"/></svg>
+        <span>Oggi</span>
+      </button>
+      <button class="barra-voce" data-vai="esercizi" aria-label="Esercizi">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3.2"/><circle cx="12" cy="12" r="6.6" opacity=".6"/><circle cx="12" cy="12" r="9.6" opacity=".3"/></svg>
+        <span>Esercizi</span>
+      </button>
+      <button class="barra-voce" data-vai="diario" aria-label="Diario">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3.5h10.5A1.5 1.5 0 0 1 18 5v15.5H7a2 2 0 0 1-2-2v-13a2 2 0 0 1 1-2Zm-1 15a2 2 0 0 1 2-2h11M9 8h5"/></svg>
+        <span>Diario</span>
+      </button>
+      <button class="barra-voce" data-vai="chi" aria-label="Chi sono">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8.5" r="3.8"/><path d="M4.5 20.5c.8-3.8 3.8-6 7.5-6s6.7 2.2 7.5 6"/></svg>
+        <span>Chi sono</span>
+      </button>
+    </nav>
+
+    <!-- Foglio che sale dal basso: approfondimento della riflessione -->
+    <div class="velo" id="velo" hidden></div>
+    <div class="foglio" id="foglio" role="dialog" aria-modal="true" aria-labelledby="foglio-titolo" hidden>
+      <div class="foglio-maniglia" aria-hidden="true"></div>
+      <p class="etichetta" id="foglio-titolo">Per approfondire</p>
+      <p class="foglio-testo" id="foglio-testo"></p>
+      <div class="foglio-domanda">
+        <p class="etichetta">Una domanda per te</p>
+        <p class="domanda" id="foglio-domanda"></p>
+      </div>
+      <button class="pulsante pulsante-primario" id="btn-rispondi">Rispondi nel diario</button>
+      <button class="pulsante pulsante-testo" id="btn-chiudi-foglio">Chiudi</button>
+    </div>
+
+    <!-- Avviso breve in basso (salvataggi, annulla) -->
+    <div class="avviso" id="avviso" role="status" aria-live="polite"></div>
+  </div>
+
+  <script src="./content.js"></script>
+  <script src="./app.js"></script>
+</body>
+</html>
