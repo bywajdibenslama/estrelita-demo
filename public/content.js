@@ -106,8 +106,10 @@ const CONTENUTI = {
 
   /* ---------- Notifiche ---------- */
   notifiche: {
-    pulsante: "Attiva la riflessione del giorno",
-    attivate: "Riflessione del giorno attivata",
+    etichetta: "Riflessione del giorno",
+    statoAcceso: "Accesa: la frase del giorno arriva come notifica",
+    statoSpento: "Spenta: tocca per riceverla come notifica",
+    spente: "Notifiche spente. Puoi riaccenderle quando vuoi 🌷",
     titolo: "La riflessione del giorno 🌷",
     // Messaggio quando le notifiche non ci sono perché l'app non è installata (iPhone)
     installaPrima: "Su iPhone la riflessione del giorno arriva solo all'app installata: aggiungila alla schermata Home e aprila dal tulipano. Ti aspetto lì 🌷",

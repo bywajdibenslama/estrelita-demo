@@ -162,22 +162,32 @@
     setTimeout(() => { vai("diario"); $("#diario-nota").focus({ preventScroll: true }); }, 300);
   });
 
-  /* ---------- Notifiche ---------- */
-  const btnNotifiche = $("#btn-notifiche");
+  /* ---------- Notifiche: interruttore acceso/spento ----------
+     Acceso: chiede il permesso e manda subito la frase del giorno.
+     Su Android con l'app installata registra anche l'invio giornaliero
+     in background (Periodic Background Sync, solo Chrome; vedi service-worker.js).
+     Spento: niente più notifiche dall'app. Il permesso del telefono resta
+     com'è: un sito non può toglierselo da solo. */
+  const interruttore = $("#interruttore-notifiche");
   const msgNotifiche = $("#msg-notifiche");
   const ePhone = /iphone|ipad|ipod/i.test(navigator.userAgent) ||
     (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
   const installata = window.matchMedia("(display-mode: standalone)").matches || navigator.standalone === true;
+  const SYNC_TAG = "riflessione-del-giorno";
 
-  function aggiornaPulsanteNotifiche() {
-    const attive = "Notification" in window && Notification.permission === "granted" &&
-      memoria.leggi("estrelita.notifiche", false);
-    $("#btn-notifiche-testo").textContent = attive ? C.notifiche.attivate : C.notifiche.pulsante;
-    btnNotifiche.classList.toggle("fatto", !!attive);
+  // Acceso = scelta salvata E permesso del telefono concesso
+  function notificheAccese() {
+    return "Notification" in window && Notification.permission === "granted" &&
+      memoria.leggi("estrelita.notifiche", false) === true;
   }
-  aggiornaPulsanteNotifiche();
+  function aggiornaInterruttore() {
+    const acceso = notificheAccese();
+    interruttore.setAttribute("aria-checked", String(acceso));
+    $("#interruttore-stato").textContent = acceso ? C.notifiche.statoAcceso : C.notifiche.statoSpento;
+  }
+  aggiornaInterruttore();
 
-  // Messaggio sotto il pulsante; con conGuida compare anche "Mostrami come si fa"
+  // Messaggio sotto l'interruttore; con conGuida compare anche "Mostrami come si fa"
   function messaggioGentile(testoMsg, conGuida = false) {
     $("#msg-notifiche-testo").textContent = testoMsg;
     $("#msg-notifiche-guida").hidden = !conGuida;
@@ -201,28 +211,63 @@
     new Notification(C.notifiche.titolo, opzioni);
   }
 
-  btnNotifiche.addEventListener("click", async () => {
-    msgNotifiche.hidden = true;
+  // Invio giornaliero in background: c'è solo in Chrome con l'app installata.
+  // Se non c'è, non succede niente di male: l'interruttore funziona lo stesso.
+  async function invioGiornaliero(attivo) {
+    try {
+      const reg = await navigator.serviceWorker?.ready;
+      if (!reg || !("periodicSync" in reg)) return;
+      if (attivo) {
+        const stato = await navigator.permissions.query({ name: "periodic-background-sync" });
+        if (stato.state === "granted") await reg.periodicSync.register(SYNC_TAG, { minInterval: 24 * 60 * 60 * 1000 });
+      } else {
+        await reg.periodicSync.unregister(SYNC_TAG);
+      }
+    } catch (errore) {
+      console.info("Invio giornaliero non disponibile:", errore.message);
+    }
+  }
+
+  async function accendiNotifiche() {
     if (!("Notification" in window)) {
       // Su iPhone le notifiche esistono solo se l'app è installata nella schermata Home
       if (ePhone && !installata) messaggioGentile(C.notifiche.installaPrima, true);
       else messaggioGentile(C.notifiche.nonSupportate);
       return;
     }
+    const permesso = Notification.permission === "granted"
+      ? "granted"
+      : await Notification.requestPermission();
+    if (permesso !== "granted") { messaggioGentile(C.notifiche.negate); return; }
+    memoria.scrivi("estrelita.notifiche", true);
+    aggiornaInterruttore();
+    await inviaNotificaDiProva();
+    invioGiornaliero(true);
+    mostraAvviso(C.notifiche.inviata);
+  }
+
+  function spegniNotifiche() {
+    memoria.scrivi("estrelita.notifiche", false);
+    aggiornaInterruttore();
+    invioGiornaliero(false);
+    mostraAvviso(C.notifiche.spente);
+  }
+
+  interruttore.addEventListener("click", async () => {
+    msgNotifiche.hidden = true;
     try {
-      const permesso = Notification.permission === "granted"
-        ? "granted"
-        : await Notification.requestPermission();
-      if (permesso !== "granted") { messaggioGentile(C.notifiche.negate); return; }
-      memoria.scrivi("estrelita.notifiche", true);
-      await inviaNotificaDiProva();
-      aggiornaPulsanteNotifiche();
-      mostraAvviso(C.notifiche.inviata);
+      if (notificheAccese()) spegniNotifiche();
+      else await accendiNotifiche();
     } catch (errore) {
       console.warn("Notifica non inviata:", errore);
       messaggioGentile(C.notifiche.nonSupportate);
+      aggiornaInterruttore();
     }
   });
+  // Toccando il testo accanto si usa l'interruttore
+  $(".interruttore-testi").addEventListener("click", (e) => { e.preventDefault(); interruttore.click(); });
+  // Se il permesso cambia dalle impostazioni del telefono, l'interruttore si adegua al ritorno
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) aggiornaInterruttore(); });
 
   /* =================================================================
      2. ESERCIZI

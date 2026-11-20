@@ -5,7 +5,10 @@
    avvio il telefono scarica i file nuovi e butta la cache vecchia.
    ===================================================================== */
 
-const VERSIONE = "estrelita-v4";
+// Le frasi stanno in content.js: il service worker le legge da lì
+importScripts("./content.js");
+
+const VERSIONE = "estrelita-v5";
 const CACHE_FONT = "estrelita-font-v1";
 
 // File dell'app, con percorsi relativi alla posizione di questo file
@@ -99,3 +102,28 @@ self.addEventListener("notificationclick", (evento) => {
     })
   );
 });
+
+// Invio giornaliero in background (solo Chrome con l'app installata):
+// il telefono sveglia il service worker circa una volta al giorno.
+self.addEventListener("periodicsync", (evento) => {
+  if (evento.tag !== "riflessione-del-giorno") return;
+  evento.waitUntil(mostraRiflessione());
+});
+
+// Stessa regola dell'app: stessa frase per tutto il giorno
+function fraseDelGiorno() {
+  const oggi = new Date();
+  const giorni = Math.floor(Date.UTC(oggi.getFullYear(), oggi.getMonth(), oggi.getDate()) / 86400000);
+  return CONTENUTI.frasi[giorni % CONTENUTI.frasi.length];
+}
+
+async function mostraRiflessione() {
+  if (Notification.permission !== "granted") return;
+  await self.registration.showNotification(CONTENUTI.notifiche.titolo, {
+    body: fraseDelGiorno().testo,
+    icon: "./icons/icon-192.png",
+    badge: "./icons/icon-192.png",
+    tag: "riflessione-del-giorno",
+    lang: "it"
+  });
+}

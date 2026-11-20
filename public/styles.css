@@ -457,3 +457,26 @@ button { cursor: pointer; border: 0; background: none; }
 .icona-passo circle { fill: currentColor; stroke: none; }
 .installa-nota { font-size: 13.5px; color: var(--testo-tenue); line-height: 1.5; margin-bottom: 14px; }
 #btn-copia-link { margin-bottom: 4px; }
+
+/* ---------- Interruttore delle notifiche ---------- */
+.riga-interruttore {
+  display: flex; align-items: center; gap: 14px;
+  background: var(--bianco-caldo); border: 1px solid #F0E4DC; border-radius: var(--raggio);
+  box-shadow: var(--ombra-lieve); padding: 14px 16px 14px 18px;
+}
+.riga-interruttore .campanella { font-size: 20px; }
+.interruttore-testi { flex: 1; display: flex; flex-direction: column; gap: 2px; cursor: pointer; }
+.interruttore-titolo { font-weight: 700; font-size: 15.5px; }
+.interruttore-stato { font-size: 13px; color: var(--testo-tenue); line-height: 1.35; }
+.interruttore {
+  flex: none; position: relative; width: 52px; height: 32px; border-radius: 999px;
+  background: #E6DCD5; transition: background .4s var(--lento);
+}
+.interruttore-pallino {
+  position: absolute; top: 3px; left: 3px; width: 26px; height: 26px; border-radius: 50%;
+  background: #fff; box-shadow: 0 2px 5px rgba(74, 63, 58, .25);
+  transition: left .35s var(--lento);
+}
+.interruttore[aria-checked="true"] { background: var(--salvia); }
+.interruttore[aria-checked="true"] .interruttore-pallino { left: 23px; }
+.interruttore:focus-visible { outline: 2px solid var(--cipria-scuro); outline-offset: 3px; }

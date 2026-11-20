@@ -88,10 +88,17 @@
           <button class="pulsante pulsante-primario" id="btn-rifletti">Rifletti</button>
         </article>
 
-        <button class="pulsante pulsante-morbido entra" id="btn-notifiche">
+        <!-- Interruttore delle notifiche -->
+        <div class="riga-interruttore entra">
           <span class="campanella" aria-hidden="true">🔔</span>
-          <span id="btn-notifiche-testo"></span>
-        </button>
+          <label class="interruttore-testi" for="interruttore-notifiche">
+            <span class="interruttore-titolo" data-testo="notifiche.etichetta"></span>
+            <span class="interruttore-stato" id="interruttore-stato"></span>
+          </label>
+          <button class="interruttore" id="interruttore-notifiche" role="switch" aria-checked="false">
+            <span class="interruttore-pallino"></span>
+          </button>
+        </div>
         <div class="messaggio-gentile" id="msg-notifiche" hidden>
           <p id="msg-notifiche-testo"></p>
           <button class="link-gentile" id="msg-notifiche-guida" hidden data-testo="installa.mostramiCome"></button>
